@@ -1,0 +1,32 @@
+[0m17:40:20.164336 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000015F07D25D30>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000015F06ABCF50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000015F08A37390>]}
+
+
+============================== 17:40:20.252953 | dfdc5723-438b-49e2-818c-f7f70b7a28cd ==============================
+[0m17:40:20.252953 [info ] [MainThread]: Running with dbt=1.11.7
+[0m17:40:20.253418 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'no_print': 'None', 'version_check': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'printer_width': '80', 'write_json': 'True', 'empty': 'None', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'profiles_dir': 'C:\\Users\\User\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'use_colors': 'True', 'indirect_selection': 'eager', 'invocation_command': 'dbt init shipping_tracker', 'use_experimental_parser': 'False', 'log_path': 'logs'}
+[0m17:40:20.304200 [debug] [MainThread]: Starter project path: C:\Users\User\Documents\Projects\AIS\.venv\Lib\site-packages\dbt\include\starter_project
+[0m17:40:20.322041 [info ] [MainThread]: 
+Your new dbt project "shipping_tracker" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m17:40:20.322650 [info ] [MainThread]: Setting up your profile.
+[0m17:40:25.598510 [debug] [MainThread]: Snowflake adapter: Setting snowflake.connector to ERROR (file logging only)
+[0m17:40:25.598835 [debug] [MainThread]: Snowflake adapter: Setting botocore to ERROR (file logging only)
+[0m17:40:25.599025 [debug] [MainThread]: Snowflake adapter: Setting boto3 to ERROR (file logging only)
+[0m17:42:26.876699 [info ] [MainThread]: Profile shipping_tracker written to C:\Users\User\.dbt\profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m17:42:26.877851 [debug] [MainThread]: Command `dbt init` succeeded at 17:42:26.877734 after 126.83 seconds
+[0m17:42:26.878103 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000015F0C5FA190>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000015F0BCC8B90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000015F0C40F130>]}
+[0m17:42:26.878339 [debug] [MainThread]: Flushing usage events
+[0m17:42:28.080866 [debug] [MainThread]: An error was encountered while trying to flush usage events

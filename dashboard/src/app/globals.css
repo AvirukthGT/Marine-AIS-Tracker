@@ -1,0 +1,274 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+
+@theme inline {
+  --color-background: #0a0a0a;
+  --color-foreground: #e0e0e0;
+  --color-neon-cyan: #00f3ff;
+  --color-amber-warn: #ffbf00;
+  --color-crimson-alert: #ff003c;
+  --color-glass-bg: rgba(10, 10, 10, 0.75);
+  --color-glass-border: rgba(0, 243, 255, 0.12);
+  --color-glass-border-hover: rgba(0, 243, 255, 0.25);
+  --color-panel-bg: rgba(15, 15, 15, 0.85);
+  --color-card-bg: rgba(20, 20, 20, 0.6);
+  --color-text-dim: rgba(200, 200, 200, 0.5);
+  --color-text-secondary: rgba(200, 200, 200, 0.7);
+  --font-mono: 'JetBrains Mono', 'Geist Mono', 'Roboto Mono', ui-monospace, monospace;
+  --font-sans: 'Inter', 'Geist Sans', system-ui, sans-serif;
+}
+
+/* ─── Base ────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #0a0a0a;
+  color: var(--color-foreground);
+  font-family: var(--font-mono);
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 243, 255, 0.2);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 243, 255, 0.4);
+}
+
+/* ─── Glass Panel ─────────────────────────────────────────────── */
+.glass-panel {
+  background: var(--color-panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 8px;
+}
+
+.glass-panel:hover {
+  border-color: var(--color-glass-border-hover);
+}
+
+/* ─── Animations ──────────────────────────────────────────────── */
+@keyframes pulse-live {
+
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 4px #22c55e;
+  }
+
+  50% {
+    opacity: 0.4;
+    box-shadow: 0 0 12px #22c55e;
+  }
+}
+
+@keyframes glow-cyan {
+
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(0, 243, 255, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 18px rgba(0, 243, 255, 0.7);
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-pulse-live {
+  animation: pulse-live 2s ease-in-out infinite;
+}
+
+.animate-glow-cyan {
+  animation: glow-cyan 3s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+/* ─── Severity Badges ─────────────────────────────────────────── */
+.badge-critical {
+  background: rgba(255, 0, 60, 0.15);
+  color: #ff003c;
+  border: 1px solid rgba(255, 0, 60, 0.3);
+}
+
+.badge-warning {
+  background: rgba(255, 191, 0, 0.15);
+  color: #ffbf00;
+  border: 1px solid rgba(255, 191, 0, 0.3);
+}
+
+.badge-info {
+  background: rgba(0, 243, 255, 0.1);
+  color: #00f3ff;
+  border: 1px solid rgba(0, 243, 255, 0.2);
+}
+
+/* ─── Map container ───────────────────────────────────────────── */
+.maplibregl-map {
+  font-family: var(--font-mono) !important;
+}
+
+.maplibregl-ctrl-bottom-left,
+.maplibregl-ctrl-bottom-right {
+  display: none !important;
+}
+
+/* ─── Tactical Scan Line ──────────────────────────────────────── */
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0, 243, 255, 0) 10%,
+      rgba(0, 243, 255, 0.15) 40%,
+      rgba(0, 243, 255, 0.3) 50%,
+      rgba(0, 243, 255, 0.15) 60%,
+      rgba(0, 243, 255, 0) 90%,
+      transparent 100%);
+  z-index: 60;
+  pointer-events: none;
+  animation: scan-sweep 6s linear infinite;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.1), 0 0 60px rgba(0, 243, 255, 0.05);
+}
+
+@keyframes scan-sweep {
+  0% {
+    top: -2px;
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 1;
+  }
+
+  95% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 100vh;
+    opacity: 0;
+  }
+}
+
+/* ─── HUD Corner Brackets ─────────────────────────────────────── */
+.hud-corner {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  border-color: rgba(0, 243, 255, 0.2);
+  border-style: solid;
+  border-width: 0;
+  z-index: 55;
+  pointer-events: none;
+}
+
+.hud-corner-tl {
+  top: 56px;
+  left: 354px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.hud-corner-tr {
+  top: 56px;
+  right: 354px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.hud-corner-bl {
+  bottom: 50px;
+  left: 354px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.hud-corner-br {
+  bottom: 50px;
+  right: 354px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+/* ─── Vignette Overlay ────────────────────────────────────────── */
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 45;
+  background: radial-gradient(ellipse at center,
+      transparent 50%,
+      rgba(0, 0, 0, 0.3) 80%,
+      rgba(0, 0, 0, 0.6) 100%);
+}
+
+/* ─── Coordinate Grid Overlay ─────────────────────────────────── */
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 44;
+  background-image:
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 30%, transparent 70%);
+}
+
+/* ─── Noise/Grain Overlay ─────────────────────────────────────── */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 43;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
