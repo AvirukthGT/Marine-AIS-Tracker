@@ -69,7 +69,10 @@ Standard vessel trackers map coordinates. Sentinel engineers **context**.
 
 Sentinel leverages a modern, decoupled **cloud data stack** following the ELT paradigm to ensure high throughput, fault tolerance, and analytical rigor.
 
-![End-to-end pipeline architecture diagram - from GCP ingestion through Snowflake transformation to the React frontend](assets/architecture.png)
+<img width="2534" height="1359" alt="architecture" src="https://github.com/user-attachments/assets/491eb437-7ad2-4709-8e0b-a7ed7538ea26" />
+
+(Click on the image to see better details)
+
 
 ---
 
