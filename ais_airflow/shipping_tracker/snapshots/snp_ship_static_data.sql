@@ -20,5 +20,6 @@ select
     dimension_to_stern
 from {{ source('raw_shipping_data', 'parsed_ship_static_data') }}
 where mmsi is not null
+qualify row_number() over (partition by mmsi order by ship_name, destination) = 1
 
 {% endsnapshot %}

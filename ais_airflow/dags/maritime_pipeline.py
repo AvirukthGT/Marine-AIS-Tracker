@@ -1,6 +1,6 @@
 from airflow import DAG
-from airflow.operators.bash import BashOperator
-from airflow.providers.snowflake.operators.snowflake import SnowflakeOperator
+from airflow.providers.standard.operators.bash import BashOperator
+from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from datetime import datetime, timedelta
 
 # Default settings for the pipeline
@@ -18,42 +18,40 @@ with DAG(
     'maritime_tracking_pipeline',
     default_args=default_args,
     description='End-to-end AIS ingestion and dbt transformation',
-    schedule_interval=timedelta(minutes=10), # Runs every 10 minutes
+    schedule=timedelta(minutes=10), # Runs every 10 minutes
     start_date=datetime(2026, 3, 5),
     catchup=False,
     tags=['ais', 'snowflake', 'dbt'],
 ) as dag:
 
     # 1. Ingest Data from GCP into Snowflake Bronze Layer
-    ingest_raw_data = SnowflakeOperator(
+    ingest_raw_data = SQLExecuteQueryOperator(
         task_id='ingest_gcp_to_snowflake',
-        snowflake_conn_id='snowflake_default', # We will configure this in the Airflow UI
+        conn_id='snowflake_default',
         sql="""
-            COPY INTO raw_ais_data (raw_payload)
-            FROM @ais_raw_gcs_stage
+            COPY INTO shipping.raw.raw_ais_data (raw_payload)
+            FROM @shipping.public.ais_raw_gcs_stage
+            FILE_FORMAT = (TYPE = JSON)
             ON_ERROR = 'CONTINUE';
         """
     )
 
-    # Note: The BashOperator paths will point to where your dbt project lives 
-    # inside the Airflow Docker container.
-
     # 2. Run dbt Snapshots (SCD Type 2)
     dbt_snapshot = BashOperator(
         task_id='dbt_snapshot',
-        bash_command='cd /usr/local/airflow/dbt/shipping_tracker && dbt snapshot'
+        bash_command='cd /usr/local/airflow/shipping_tracker && dbt snapshot --profiles-dir .'
     )
 
     # 3. Run Silver Layer (Staging)
     dbt_run_silver = BashOperator(
         task_id='dbt_run_silver',
-        bash_command='cd /usr/local/airflow/dbt/shipping_tracker && dbt run --select staging'
+        bash_command='cd /usr/local/airflow/shipping_tracker && dbt run --select staging --profiles-dir .'
     )
 
     # 4. Run Gold Layer (Marts)
     dbt_run_gold = BashOperator(
         task_id='dbt_run_gold',
-        bash_command='cd /usr/local/airflow/dbt/shipping_tracker && dbt run --select marts'
+        bash_command='cd /usr/local/airflow/shipping_tracker && dbt run --select marts --profiles-dir .'
     )
 
     # Set the dependencies (The Order of Operations)
