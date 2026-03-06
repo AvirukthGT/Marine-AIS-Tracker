@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: raw_shipping_data
+    database: SHIPPING
+    schema: RAW
+    tables:
+      - name: parsed_position_reports
+        description: "Raw live position pings from AIS stream"
+      - name: parsed_ship_static_data
+        description: "Raw static data including ship type and destination"
+      - name: RAW_DATALASTIC_MASTER
+        description: "Mesh sweep of the entire Middle East theater"
+
