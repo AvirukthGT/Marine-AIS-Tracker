@@ -6,6 +6,7 @@ import type { Anomaly } from '@/lib/mock-data';
 interface AlertFeedProps {
     anomalies: Anomaly[];
     onSelectVessel: (vesselId: string) => void;
+    selectedVesselId?: string | null;
 }
 
 const severityConfig = {
@@ -32,7 +33,7 @@ const severityConfig = {
     },
 };
 
-export default function AlertFeed({ anomalies, onSelectVessel }: AlertFeedProps) {
+export default function AlertFeed({ anomalies, onSelectVessel, selectedVesselId }: AlertFeedProps) {
     return (
         <div
             className="fixed left-3 top-[60px] bottom-3 w-[340px] z-40 glass-panel flex flex-col"
@@ -56,22 +57,27 @@ export default function AlertFeed({ anomalies, onSelectVessel }: AlertFeedProps)
                 {anomalies.map((anomaly, index) => {
                     const config = severityConfig[anomaly.severity];
                     const Icon = config.icon;
+                    const isSelected = selectedVesselId === anomaly.vesselId;
 
                     return (
                         <button
                             key={anomaly.id}
                             onClick={() => onSelectVessel(anomaly.vesselId)}
-                            className="w-full text-left p-3 rounded-md border border-glass-border hover:border-glass-border-hover transition-all duration-200 cursor-pointer group animate-fade-in"
+                            className={`w-full text-left p-3 rounded-md border transition-all duration-200 cursor-pointer group animate-fade-in ${isSelected
+                                ? 'border-neon-cyan bg-neon-cyan/10 shadow-[0_0_15px_rgba(0,243,255,0.15)] ring-1 ring-neon-cyan/50'
+                                : 'border-glass-border hover:border-glass-border-hover'
+                                }`}
                             style={{
-                                background: config.glowColor,
+                                background: isSelected ? undefined : config.glowColor,
                                 animationDelay: `${index * 50}ms`,
                             }}
                         >
                             {/* Top row: severity + vessel name */}
                             <div className="flex items-center justify-between mb-1.5">
                                 <div className="flex items-center gap-2">
-                                    <Icon className={`w-3.5 h-3.5 ${config.accentColor}`} strokeWidth={2} />
-                                    <span className="text-[11px] font-semibold text-foreground tracking-wide group-hover:text-neon-cyan transition-colors">
+                                    <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-neon-cyan drop-shadow-[0_0_5px_rgba(0,243,255,0.5)]' : config.accentColor}`} strokeWidth={2} />
+                                    <span className={`text-[11px] font-semibold tracking-wide transition-colors ${isSelected ? 'text-neon-cyan drop-shadow-[0_0_2px_rgba(0,243,255,0.8)]' : 'text-foreground group-hover:text-neon-cyan'
+                                        }`}>
                                         {anomaly.vesselName}
                                     </span>
                                 </div>

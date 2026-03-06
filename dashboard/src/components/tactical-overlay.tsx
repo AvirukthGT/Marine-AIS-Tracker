@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
     Crosshair,
     Satellite,
@@ -8,9 +8,20 @@ import {
     Database,
     Wifi,
     Shell,
+    Target,
+    EyeOff,
+    DollarSign,
+    Milestone
 } from 'lucide-react';
+import type { Vessel } from '@/lib/mock-data';
+import { getConflictZoneStats } from '@/lib/conflict-zone';
 
-export default function TacticalOverlay() {
+interface TacticalOverlayProps {
+    vessels: Vessel[];
+    threatCount: number;
+}
+
+export default function TacticalOverlay({ vessels, threatCount }: TacticalOverlayProps) {
     const [time, setTime] = useState('');
     const [missionClock, setMissionClock] = useState('00:00:00');
     const [scanAngle, setScanAngle] = useState(0);
@@ -35,6 +46,19 @@ export default function TacticalOverlay() {
         }, 1000);
         return () => clearInterval(interval);
     }, []);
+
+    const hraStats = useMemo(() => getConflictZoneStats(vessels), [vessels]);
+
+    // Compute tactical counts for the entire theater
+    const { darkFleet, diverted, economicExposure } = useMemo(() => {
+        let df = 0, div = 0, expo = 0;
+        vessels.forEach(v => {
+            if (v.darkFleetSuspicion) df++;
+            if (v.isDivertedCape) div++;
+            if (v.isHighValueTarget) expo += (v.estimatedCargoValueUsd || 0);
+        });
+        return { darkFleet: df, diverted: div, economicExposure: expo };
+    }, [vessels]);
 
     return (
         <>
@@ -84,15 +108,43 @@ export default function TacticalOverlay() {
                 <StatBadge
                     icon={<Database className="w-3 h-3" />}
                     label="TRACKED"
-                    value="50"
+                    value={vessels.length.toLocaleString()}
                     color="text-amber-warn"
+                />
+                <div className="w-px h-5 bg-glass-border" />
+                <StatBadge
+                    icon={<Target className="w-3 h-3" />}
+                    label="HRA ZONES"
+                    value={hraStats.totalInZone.toLocaleString()}
+                    color="text-crimson-alert"
                 />
                 <div className="w-px h-5 bg-glass-border" />
                 <StatBadge
                     icon={<Shell className="w-3 h-3" />}
                     label="THREATS"
-                    value="8"
+                    value={String(threatCount)}
                     color="text-crimson-alert"
+                />
+                <div className="w-px h-5 bg-glass-border" />
+                <StatBadge
+                    icon={<EyeOff className="w-3 h-3" />}
+                    label="DARK FLEET"
+                    value={darkFleet.toLocaleString()}
+                    color="text-fuchsia-400"
+                />
+                <div className="w-px h-5 bg-glass-border" />
+                <StatBadge
+                    icon={<Milestone className="w-3 h-3" />}
+                    label="DIVERTED (CAPE)"
+                    value={diverted.toLocaleString()}
+                    color="text-amber-warn"
+                />
+                <div className="w-px h-5 bg-glass-border" />
+                <StatBadge
+                    icon={<DollarSign className="w-3 h-3" />}
+                    label="ECONOMIC EXPOSURE"
+                    value={`$${(economicExposure / 1000000000).toFixed(1)}B`}
+                    color="text-neon-cyan"
                 />
                 <div className="w-px h-5 bg-glass-border" />
                 <div className="flex items-center gap-2">

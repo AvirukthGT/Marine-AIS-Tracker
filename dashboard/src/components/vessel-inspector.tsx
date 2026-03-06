@@ -10,12 +10,17 @@ import {
     Radio,
     X,
     MapPin,
+    EyeOff,
+    DollarSign,
+    Milestone,
+    Target,
 } from 'lucide-react';
 import type { Vessel } from '@/lib/mock-data';
 
 interface VesselInspectorProps {
     vessel: Vessel | null;
     onClose: () => void;
+    isOpen: boolean;
 }
 
 const statusConfig = {
@@ -43,11 +48,12 @@ function DataRow({ icon: Icon, label, value, accent = false }: {
     );
 }
 
-export default function VesselInspector({ vessel, onClose }: VesselInspectorProps) {
+export default function VesselInspector({ vessel, onClose, isOpen }: VesselInspectorProps) {
     return (
         <div
-            className="fixed right-3 top-[60px] bottom-3 w-[340px] z-40 glass-panel flex flex-col transition-all duration-300"
-            style={{ pointerEvents: 'auto' }}
+            className={`fixed right-3 top-[60px] bottom-3 w-[340px] z-[45] glass-panel flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-[120%]'
+                }`}
+            style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
         >
             {/* Panel Header */}
             <div className="px-4 py-3 border-b border-glass-border flex items-center justify-between shrink-0">
@@ -96,12 +102,41 @@ export default function VesselInspector({ vessel, onClose }: VesselInspectorProp
                     >
                         <DataRow icon={Radio} label="MMSI" value={vessel.mmsi} accent />
                         <DataRow icon={Ship} label="Type" value={vessel.type} />
-                        <DataRow icon={Flag} label="Flag" value={vessel.flag} />
+                        <DataRow icon={Flag} label="Zone" value={vessel.tacticalZone} />
                         <DataRow icon={Anchor} label="Destination" value={vessel.destination} />
                         <DataRow icon={Gauge} label="Speed" value={`${vessel.speed.toFixed(1)} kn`} />
                         <DataRow icon={Compass} label="Heading" value={`${vessel.heading}°`} />
                         <DataRow icon={Navigation} label="Course" value={`${vessel.heading}° T`} />
                         <DataRow icon={MapPin} label="Position" value={`${vessel.lat.toFixed(4)}°N, ${vessel.lng.toFixed(4)}°E`} />
+                    </div>
+
+                    {/* Geopolitical Intelligence */}
+                    <div className="rounded-md border border-glass-border p-3 space-y-2"
+                        style={{ background: 'rgba(50,10,10,0.3)' }}
+                    >
+                        <div className="text-[9px] uppercase tracking-widest text-crimson-alert mb-2 flex items-center gap-1.5 border-b border-crimson-alert/20 pb-2">
+                            <Target className="w-3 h-3" />
+                            Tactical Intelligence
+                        </div>
+                        <DataRow icon={Ship} label="HVT" value={vessel.isHighValueTarget ? 'YES' : 'NO'} accent={vessel.isHighValueTarget} />
+                        <DataRow
+                            icon={EyeOff}
+                            label="Dark Fleet Suspicion"
+                            value={vessel.darkFleetSuspicion ? 'CRITICAL' : 'CLEAR'}
+                            accent={vessel.darkFleetSuspicion}
+                        />
+                        <DataRow
+                            icon={Milestone}
+                            label="Cape Diversion"
+                            value={vessel.isDivertedCape ? 'DETECTED' : 'CLEAR'}
+                            accent={vessel.isDivertedCape}
+                        />
+                        <DataRow
+                            icon={DollarSign}
+                            label="Est. Cargo Value"
+                            value={vessel.estimatedCargoValueUsd > 0 ? `$${(vessel.estimatedCargoValueUsd / 1000000).toFixed(0)}M USD` : 'N/A'}
+                            accent={vessel.estimatedCargoValueUsd > 0}
+                        />
                     </div>
 
                     {/* Coordinates Display */}

@@ -1,10 +1,14 @@
 'use client';
 
-import { Radar, Radio, Shield } from 'lucide-react';
+import { Radar, Radio, Shield, FileText } from 'lucide-react';
 
-export default function Header() {
+interface HeaderProps {
+    onOpenBriefing?: () => void;
+}
+
+export default function Header({ onOpenBriefing }: HeaderProps) {
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 h-12 flex items-center justify-between px-5 glass-panel rounded-none border-t-0 border-x-0"
+        <header className="fixed top-0 left-0 right-0 z-50 h-12 flex items-center justify-between px-5 glass-panel rounded-none border-t-0 border-x-0 pointer-events-auto"
             style={{ borderBottom: '1px solid rgba(0, 243, 255, 0.1)' }}
         >
             {/* Left: Logo & Title */}
@@ -31,8 +35,17 @@ export default function Header() {
                 <span>Indian Ocean · Red Sea · Persian Gulf</span>
             </div>
 
-            {/* Right: Live Feed Indicator */}
-            <div className="flex items-center gap-3">
+            {/* Right: Live Feed Indicator & Briefing Button */}
+            <div className="flex items-center gap-4">
+                {onOpenBriefing && (
+                    <button
+                        onClick={onOpenBriefing}
+                        className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-md border border-neon-cyan/30 bg-neon-cyan/5 hover:bg-neon-cyan/20 transition-all text-neon-cyan text-[10px] font-bold tracking-widest uppercase shadow-[0_0_10px_rgba(0,243,255,0.1)] cursor-pointer"
+                    >
+                        <FileText className="w-3.5 h-3.5" />
+                        Intelligence Report
+                    </button>
+                )}
                 <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-green-500/30 bg-green-500/5">
                     <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse-live" />
                     <span className="text-[10px] font-semibold tracking-widest text-green-400 uppercase">
